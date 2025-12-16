@@ -351,3 +351,36 @@ $(document).ready(function(){
 
 AOS.init();
 
+// PROPERTY SEARCH
+import { propertiesService } from './properties-service.js'
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const searchForm = document.querySelector('.search_bar form')
+
+  if (searchForm) {
+    searchForm.addEventListener('submit', async (e) => {
+      e.preventDefault()
+
+      const searchInput = searchForm.querySelector('input[type="text"]')
+      const searchQuery = searchInput.value.trim()
+
+      if (searchQuery) {
+        try {
+          const results = await propertiesService.searchProperties(searchQuery)
+          sessionStorage.setItem('propertySearchResults', JSON.stringify(results))
+          window.location.href = 'contact.html?search=' + encodeURIComponent(searchQuery)
+        } catch (error) {
+          console.error('Search error:', error)
+        }
+      }
+    })
+  }
+
+  try {
+    const featured = await propertiesService.getFeaturedProperties()
+    console.log('Featured properties loaded:', featured.length)
+  } catch (error) {
+    console.error('Error loading featured properties:', error)
+  }
+})
+
